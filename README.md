@@ -3,7 +3,7 @@ Ruby scripts for generaing openbox pipemenus
 
 #ob_rmenu.rb /path/to/textfile
 
-Generates openbox pipemenu from a textfile formated like this
+Generates openbox pipemenu from a textfile formatted like this
 
 ```
 terminal=terminator
@@ -26,7 +26,6 @@ menu:applications
 
 menu:video/sound	
 	nvidia settings=nvidia-settings
-	disable screensaver=terminator -x sh -c "while sleep 30 ; do xdotool keydown Shift_L keyup Shift_L ; done"
 	menu:exec:monitor setup=$menu_folder/ob_rmenu_monitors.rb
 	
 	mixer=terminator -e alsamixer
@@ -103,6 +102,6 @@ Generates openbox pipemenu with all applications in /usr/share/applications sort
 
 Generates openbox pipemenu for viewing and terminating processes
 
-#ob_rmenu_folder.rb
+#ob_rmenu_folder.rb /path/to/folder
 
 Generates openbox pipemenu for browsing and opening folders
