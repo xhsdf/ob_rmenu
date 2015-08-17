@@ -66,7 +66,7 @@ shutdown=poweroff
 
 #ob_rmenu_monitors.rb
 
-Generates openbox pipemenu for configuring monitor positions
+Generates openbox pipemenu for configuring monitor positions using output from xrandr
 
 ##example output for 3 monitors
 
