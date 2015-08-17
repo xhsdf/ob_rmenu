@@ -4,8 +4,6 @@ require 'pathname'
 
 def main(menu_file, icon_folder)
 	puts '<openbox_pipe_menu>'
-	#puts '<separator label="%s"/>' % Time.now.strftime("%Y-%m-%d     %H:%M") # TODO calendar
-	#puts '<separator label="%s"/>' % ENV['USER']
 	print_menu(File.open(menu_file), get_icons(icon_folder))	
 	puts '</openbox_pipe_menu>'
 end
