@@ -90,7 +90,7 @@ module RMenu
 	end
 		
 	def self.get_menu(menu_file)
-		menus = Hash.new
+		menus = Array.new
 		root = Menu.new('root')
 		menus[0] = root
 		File.open(menu_file).each_line.reject do |line| line.lstrip.start_with?('#') end.each do |line|
