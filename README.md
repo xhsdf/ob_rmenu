@@ -22,11 +22,11 @@ menu:applications
 	
 	geany=geany
 	
-	menu:exec:all=$menu_folder/ob_rmenu_apps.rb
+	exec:all=$menu_folder/ob_rmenu_apps.rb
 
 menu:video/sound	
 	nvidia settings=nvidia-settings
-	menu:exec:monitor setup=$menu_folder/ob_rmenu_monitors.rb
+	exec:monitor setup=$menu_folder/ob_rmenu_monitors.rb
 	
 	mixer=terminator -e alsamixer
 	
