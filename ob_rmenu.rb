@@ -2,45 +2,44 @@
 
 require 'pathname'
 
+$menu_id = 0
+
+
 def main(menu_file, icon_folder)
 	puts '<openbox_pipe_menu>'
-	print_menu(File.open(menu_file), get_icons(icon_folder))	
+	print_menu(RMenu::get_menu(menu_file), get_icons(icon_folder))	
 	puts '</openbox_pipe_menu>'
 end
 
-def print_menu(lines, icons)
-	id = 0
-	depth = 0
-	lines.each do |line|
-		if line.strip.start_with? '#'
-			next
-		end
-		line_depth = line[/^\t*/].size		
-		if line_depth < depth
-			for i in 1..(depth - line_depth)
-				puts '</menu>'
-			end
-		elsif line_depth > depth
-			depth = line_depth
-		end
-		
-		line = line.strip()
-		depth = line_depth
-		if  line.empty?
-			puts '<separator/>'
-		elsif line.start_with? 'menu:'
-			puts get_menu_entry(line, icons, id)
-			id += 1
-		else
-			puts get_item_entry(line, icons)
-		end
-	end
-	if depth > 0
-		for i in 1..(depth)
+
+def print_menu(menu, icons)
+	menu.entries.each do |e|
+		$menu_id += 1
+		if e.instance_of? RMenu::Menu
+			puts '<menu%s id="%d" label="%s">' % [get_icon_string(e.name, icons), $menu_id, e.name.strip]
+			print_menu(e, icons)
 			puts '</menu>'
+		elsif e.instance_of? RMenu::Entry
+			name = e.value[/.*?(?=(?<!\\)=)/]
+			exec = e.value[/(?<=(?<!\\)=).*/]
+			exec.gsub!('$menu_folder', File.dirname(__FILE__)) unless exec.nil?
+			action = 'Execute'
+			if e.value.start_with? 'exec:'
+				name = name.gsub('exec:', '')
+				puts '<menu%s id="%d" label="%s" execute="%s"/>' % [get_icon_string(name, icons), $menu_id, name, exec]
+			else	
+				if e.value.start_with? 'action:'
+					action = e.value.gsub(/^action:/, '')
+					name = action
+				end
+				puts '<item%s label="%s"><action name="%s">%s</action></item>' % [get_icon_string(name, icons), name, action, (exec.nil? ? "" : "<execute>#{to_xml(exec)}</execute>")]
+			end
+		elsif e.instance_of? RMenu::Separator
+			puts '<separator/>'
 		end
 	end
 end
+
 
 def get_icons(icon_folder)
 	if not icon_folder.nil? and Pathname.new(icon_folder).directory?
@@ -49,6 +48,7 @@ def get_icons(icon_folder)
 		return []
 	end
 end
+
 
 def get_icon_string(line, icons)
 	icons.each do |file, name|
@@ -59,36 +59,56 @@ def get_icon_string(line, icons)
 	return ''
 end
 
-def get_item_entry(line, icons)
-	if line.start_with? 'action:'
-		action = line[line.index(':')+1..-1]
-		return '<item%s label="%s"><action name="%s"/></item>' % [get_icon_string(action, icons), action, action]
-	else
-		name = line[0..line.index('=')-1]
-		exec = line[line.index('=')+1..-1]
-		exec.gsub!('$menu_folder', File.dirname(__FILE__))
-		return '<item%s label="%s"><action name="Execute"><execute>%s</execute></action></item>' % [get_icon_string(name, icons), name, to_xml(exec)]
-	end	
-end
-
-def get_menu_entry(line, icons, id)
-	line = line[line.index(':')+1..-1]
-	if line.start_with? 'id:'
-		line = line[line.index(':')+1..-1]
-		return '<menu%s id="%s"/>' % [get_icon_string(line, icons), line]
-	elsif line.start_with? 'exec:'
-		line = line[line.index(':')+1..-1]
-		name = line[0..line.index('=')-1]
-		exec = line[line.index('=')+1..-1]
-		exec.gsub!('$menu_folder', File.dirname(__FILE__))
-		return '<menu%s id="xh_%s-%d" label="%s" execute="%s"/>' % [get_icon_string(name, icons), name, id, name, exec]
-	else
-		return '<menu%s id="xh_%s-%d" label="%s">' % [get_icon_string(line, icons), line, id, line]
-	end
-end
 
 def to_xml(string)
 	return string.gsub('&', '&amp;').gsub('"', '&quot;')
 end
+
+
+module RMenu
+	class Separator
+	end
+
+	class Entry
+		attr_reader :value
+		
+		def initialize(value)
+			@value = value
+		end
+	end
+
+	class Menu
+		attr_reader :name, :entries
+		
+		def initialize(name)
+			@name, @entries = name, []
+		end
+		
+		def add(entry)
+			@entries << entry
+		end
+	end
+		
+	def self.get_menu(menu_file)
+		menus = Hash.new
+		root = Menu.new('root')
+		menus[0] = root
+		File.open(menu_file).each_line.reject do |line| line.lstrip.start_with?('#') end.each do |line|
+			level = line.index(/[^\t ]/)
+			line.lstrip!
+			line.gsub!("\n", '')
+			if line.empty?
+				menus[level].add(Separator.new)
+			elsif line.start_with?('menu:')
+				menus[level + 1] = Menu.new(line.sub(/^menu:/, ''))
+				menus[level].add(menus[level + 1])
+			else
+				menus[level].add(Entry.new(line))
+			end
+		end
+		return root
+	end
+end
+
 
 main(ARGV[0], ARGV[1])
