@@ -3,12 +3,12 @@
 require 'pathname'
 
 
-steam_dir = ARGV[0]
+steamapps_dir = ARGV[0]
 
 
-def main(steam_dir)
+def main(steamapps_dir)
 	games = Array.new	
-	get_acf_files(steam_dir || "#{ENV['HOME']}/.steam/steam/SteamApps/").each do |f|
+	get_acf_files(steamapps_dir || "#{ENV['HOME']}/.steam/steam/SteamApps/").each do |f|
 		id, name = nil, nil
 		File.open(f).each_line.collect do |line| line.strip end.each do |line|
 			if names = line.match(/^"name"[ \t]*"(.*)"$/)
@@ -42,4 +42,4 @@ def get_acf_files(dir)
 end
 
 
-main(steam_dir)
+main(steamapps_dir)
