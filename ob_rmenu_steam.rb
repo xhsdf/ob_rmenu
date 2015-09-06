@@ -2,11 +2,13 @@
 
 require 'pathname'
 
-STEAM_DIR=ARGV[0]
 
-def main()
+steam_dir = ARGV[0]
+
+
+def main(steam_dir)
 	games = Array.new	
-	get_acf_files.each do |f|
+	get_acf_files(steam_dir || "#{ENV['HOME']}/.steam/steam/SteamApps/").each do |f|
 		id, name = nil, nil
 		File.open(f).each_line.collect do |line| line.strip end.each do |line|
 			if names = line.match(/^"name"[ \t]*"(.*)"$/)
@@ -31,9 +33,13 @@ def main()
 end
 
 
-def get_acf_files()
-	return Pathname.new(STEAM_DIR).children.select do |c| c.file? and c.readable? and not c.symlink? and c.basename.to_s =~ /appmanifest_\d+\.acf/ end
+def get_acf_files(dir)
+	if !dir.nil? and Pathname.new(dir).directory?
+		return Pathname.new(dir).children.select do |c| c.file? and c.readable? and not c.symlink? and c.basename.to_s =~ /appmanifest_\d+\.acf/ end
+	else
+		return []
+	end
 end
 
 
-main()
+main(steam_dir)
