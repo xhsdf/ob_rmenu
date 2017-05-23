@@ -1,7 +1,7 @@
 Ruby scripts for generaing openbox pipemenus
 
 
-#ob_rmenu.rb /path/to/textfile
+# ob_rmenu.rb /path/to/textfile
 
 Generates openbox pipemenu from a textfile formatted like this
 
@@ -55,7 +55,7 @@ reboot=reboot
 shutdown=poweroff
 ```
 
-##~/.config/openbox/menu.xml
+## ~/.config/openbox/menu.xml
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -64,11 +64,11 @@ shutdown=poweroff
 </openbox_menu>
 ```
 
-#ob_rmenu_monitors.rb
+# ob_rmenu_monitors.rb
 
 Generates openbox pipemenu for configuring monitor positions using output from xrandr
 
-##example output for 3 monitors
+## example output for 3 monitors
 
 ```
 <openbox_pipe_menu>
@@ -90,18 +90,18 @@ Generates openbox pipemenu for configuring monitor positions using output from x
 </openbox_pipe_menu>
 ```
 
-#ob_rmenu_steam.rb /path/to/SteamApps
+# ob_rmenu_steam.rb /path/to/SteamApps
 
 Generates openbox pipemenu for starting Steam games
 
-#ob_rmenu_apps.rb
+# ob_rmenu_apps.rb
 
 Generates openbox pipemenu with all applications in /usr/share/applications sorted in categories
 
-#ob_rmenu_processes.rb
+# ob_rmenu_processes.rb
 
 Generates openbox pipemenu for viewing and terminating processes
 
-#ob_rmenu_folder.rb /path/to/folder
+# ob_rmenu_folder.rb /path/to/folder
 
 Generates openbox pipemenu for browsing and opening folders
