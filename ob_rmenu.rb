@@ -35,7 +35,7 @@ def print_menu(menu, icons)
 				puts '<item%s label="%s"><action name="%s">%s</action></item>' % [get_icon_string(name, icons), name, action, (exec.nil? ? "" : "<execute>#{to_xml(exec)}</execute>")]
 			end
 		elsif e.instance_of? RMenu::Separator
-			puts '<separator/>'
+			puts '<separator%s/>' % [e.name.nil? ? "" : " label=\"#{e.name}\""]
 		end
 	end
 end
@@ -67,6 +67,11 @@ end
 
 module RMenu
 	class Separator
+		attr_reader :name
+		
+		def initialize(name = nil)
+			@name = name
+		end
 	end
 
 	class Entry
@@ -99,6 +104,8 @@ module RMenu
 			line.gsub!("\n", '')
 			if line.empty?
 				menus[level].add(Separator.new)
+			elsif line.start_with?('label:')
+				menus[level].add(Separator.new(line.sub(/^label:/, '')))
 			elsif line.start_with?('menu:')
 				menus[level + 1] = Menu.new(line.sub(/^menu:/, ''))
 				menus[level].add(menus[level + 1])

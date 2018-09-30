@@ -11,6 +11,7 @@ run...=gmrun
 
 home=xdg-open .
 menu:applications
+	label:Applications
 	firefox=firefox -P default
 	
 	hexchat=hexchat
