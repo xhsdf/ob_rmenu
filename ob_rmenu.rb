@@ -35,7 +35,7 @@ def print_menu(menu, icons)
 				puts '<item%s label="%s"><action name="%s">%s</action></item>' % [get_icon_string(name, icons), name, action, (exec.nil? ? "" : "<execute>#{to_xml(exec)}</execute>")]
 			end
 		elsif e.instance_of? RMenu::Separator
-			puts '<separator%s/>' % [e.name.nil? ? "" : " label=\"#{e.name}\""]
+			puts '<separator%s/>' % [e.name.nil? ? "" : ' label="%s"' % e.name]
 		end
 	end
 end
